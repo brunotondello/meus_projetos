@@ -1,5 +1,7 @@
 package projetos.meusprojetos.menu;
 
+import projetos.meusprojetos.iniciantes.FizzBuzz;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -16,15 +18,25 @@ public class MeuMenu {
         itemSair.addActionListener(e -> encerrarAplicacao());
         menuInicio.add(itemSair);
 
+        // Menu Iniciante
+        JMenu menuIniciante = new JMenu("Iniciante");// Criar o primeiro item da barra
+        JMenuItem itemFizzBuzz = new JMenuItem("FizzBuzz");
+
+        // Adiciona itens no menu Iniciante
+        itemFizzBuzz.addActionListener(e -> new FizzBuzz());
+        menuIniciante.add(itemFizzBuzz);
+
         // Menu "ajuda"
         JMenu menuAjuda = new JMenu("Ajuda");
         JMenuItem itemSobre = new JMenuItem("Sobre");
 
+        // Adiciona itens no menu Sobre
         itemSobre.addActionListener(e -> mostrarSobre());
         menuAjuda.add(itemSobre);
 
         // Adiciona os menus na barra
         barraMenu.add(menuInicio);
+        barraMenu.add(menuIniciante);
         barraMenu.add(menuAjuda);
 
         return barraMenu;
