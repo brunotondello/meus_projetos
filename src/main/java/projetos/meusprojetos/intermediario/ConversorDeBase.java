@@ -20,7 +20,6 @@ public class ConversorDeBase extends JFrame {
         setSize(400, 200);
         setResizable(false); // Impede redimensionamento da janela
         setLocationRelativeTo(null); // Centraliza a janela na tela
-        setLocationRelativeTo(null); // Centraliza a janela
 
         // Painel principal
         JPanel panel = new JPanel();
