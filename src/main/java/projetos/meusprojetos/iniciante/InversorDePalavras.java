@@ -13,6 +13,7 @@ public class InversorDePalavras extends JFrame {
     public InversorDePalavras() {
         setTitle("Inversor de Palavras");
         setSize(400, 150);
+        setResizable(false);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null); // Centraliza a janela
 

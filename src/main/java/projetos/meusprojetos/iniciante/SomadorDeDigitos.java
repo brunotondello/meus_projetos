@@ -3,38 +3,37 @@ package projetos.meusprojetos.iniciante;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.math.BigInteger;
 
-public class CalcularFatoriais extends JFrame {
+public class SomadorDeDigitos extends JFrame {
 
     private JTextField inputField;
-    private JButton calcularButton;
+    private JButton somarButton;
     private JLabel resultadoLabel;
 
-    public CalcularFatoriais() {
-        setTitle("Calculadora de Fatorial");
+    public SomadorDeDigitos() {
+        setTitle("Soma dos Dígitos");
         setSize(400, 150);
         setResizable(false);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null); // centraliza a janela
+        setLocationRelativeTo(null); // Centraliza a janela
 
         inputField = new JTextField(10);
-        calcularButton = new JButton("Calcular");
+        somarButton = new JButton("Somar Dígitos");
         resultadoLabel = new JLabel("Resultado aqui");
 
         JPanel panel = new JPanel();
         panel.add(new JLabel("Digite um número:"));
         panel.add(inputField);
-        panel.add(calcularButton);
+        panel.add(somarButton);
         panel.add(resultadoLabel);
 
-        calcularButton.addActionListener(new ActionListener() {
+        somarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    int n = Integer.parseInt(inputField.getText());
-                    BigInteger resultado = calcularFatorial(n);
-                    resultadoLabel.setText("Fatorial: " + resultado.toString());
+                    int numero = Integer.parseInt(inputField.getText());
+                    int soma = somarDigitos(numero);
+                    resultadoLabel.setText("Soma dos dígitos: " + soma);
                 } catch (NumberFormatException ex) {
                     resultadoLabel.setText("Digite um número válido!");
                 }
@@ -42,16 +41,16 @@ public class CalcularFatoriais extends JFrame {
         });
 
         add(panel);
-
         setVisible(true);
     }
 
-    private BigInteger calcularFatorial(int n) {
-        BigInteger fatorial = BigInteger.ONE;
-        for (int i = 2; i <= n; i++) {
-            fatorial = fatorial.multiply(BigInteger.valueOf(i));
+    private int somarDigitos(int numero) {
+        numero = Math.abs(numero);
+        int soma = 0;
+        while (numero > 0) {
+            soma += numero % 10;
+            numero /= 10;
         }
-        return fatorial;
+        return soma;
     }
-
 }

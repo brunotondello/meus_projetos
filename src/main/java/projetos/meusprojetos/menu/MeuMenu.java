@@ -1,8 +1,10 @@
 package projetos.meusprojetos.menu;
 
-import projetos.meusprojetos.iniciante.CalcularFatoriais;
-import projetos.meusprojetos.iniciante.FizzBuzz;
-import projetos.meusprojetos.iniciante.InversorDePalavras;
+import projetos.meusprojetos.iniciante.*;
+import projetos.meusprojetos.intermediario.ConversorDeBase;
+import projetos.meusprojetos.intermediario.Fibonacci;
+import projetos.meusprojetos.intermediario.OrdenadorQuickSort;
+import projetos.meusprojetos.intermediario.VerificadorDePalindromo;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,16 +25,45 @@ public class MeuMenu extends JMenuBar {
         JMenuItem itemFizzBuzz = new JMenuItem("FizzBuzz");
         JMenuItem itemFatoriais = new JMenuItem("Calcular Fatoriais");
         JMenuItem itemInvertePalavras = new JMenuItem("Inversor de palavras");
+        JMenuItem itemVerificaNumeroPrimo = new JMenuItem("Verificador de números primos");
+        JMenuItem itemSomadorDeDigitos = new JMenuItem("Somador de digitos");
 
         // Adiciona itens no menu Iniciante
         itemFizzBuzz.addActionListener(e -> new FizzBuzz());
         menuIniciante.add(itemFizzBuzz);
+
+        itemVerificaNumeroPrimo.addActionListener(e -> new VerificadorDeNumerosPrimos());
+        menuIniciante.add(itemVerificaNumeroPrimo);
 
         itemFatoriais.addActionListener(e -> new CalcularFatoriais());
         menuIniciante.add(itemFatoriais);
 
         itemInvertePalavras.addActionListener(e -> new InversorDePalavras());
         menuIniciante.add(itemInvertePalavras);
+
+        itemSomadorDeDigitos.addActionListener(e -> new SomadorDeDigitos());
+        menuIniciante.add(itemSomadorDeDigitos);
+
+        //******************************
+        // Menu Intermediário
+        JMenu menuIntermediario = new JMenu("Intermediário");
+        JMenuItem itemVerPalin = new JMenuItem("Verificador de Palindromo");
+        JMenuItem itemOrdenaQS = new JMenuItem("Ordenador QuickSort");
+        JMenuItem itemFibonacci = new JMenuItem("Fibonacci");
+        JMenuItem itemConvBase = new JMenuItem("Conversor de Base");
+
+        // Adiciona itens no menu intermediario
+        itemVerPalin.addActionListener(e -> new VerificadorDePalindromo());
+        menuIntermediario.add(itemVerPalin);
+
+        itemOrdenaQS.addActionListener(e -> new OrdenadorQuickSort());
+        menuIntermediario.add(itemOrdenaQS);
+
+        itemFibonacci.addActionListener(e -> new Fibonacci());
+        menuIntermediario.add(itemFibonacci);
+
+        itemConvBase.addActionListener(e -> new ConversorDeBase());
+        menuIntermediario.add(itemConvBase);
 
         // ******************************
         // Menu "ajuda"
@@ -46,8 +77,8 @@ public class MeuMenu extends JMenuBar {
         // Adiciona os menus na barra
         this.add(menuInicio);
         this.add(menuIniciante);
+        this.add(menuIntermediario);
         this.add(menuAjuda);
-
     }
 
     private void mostrarSobre() {
