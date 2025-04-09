@@ -7,8 +7,8 @@ import java.awt.event.FocusListener;
 
 public class TelaLogin {
 
-
     public static void main(String[] args) {
+
         JFrame telaLogin = new JFrame("Login");
         telaLogin.setSize(300, 250);
         telaLogin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

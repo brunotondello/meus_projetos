@@ -13,8 +13,6 @@ public class TelaPrincipal {
 
     public TelaPrincipal(String usuario) {
 
-        MeuMenu menu = new MeuMenu();
-
         JFrame telaPrincipal = new JFrame("Bem-vindo");
         telaPrincipal.setSize(1024, 768);
         telaPrincipal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -26,7 +24,7 @@ public class TelaPrincipal {
         mensagem.setBounds(50, 50, 300, 25);
         telaPrincipal.add(mensagem);
 
-        telaPrincipal.setJMenuBar(menu.criarMenu());
+        telaPrincipal.setJMenuBar(new MeuMenu());
         telaPrincipal.setVisible(true);
     }
 

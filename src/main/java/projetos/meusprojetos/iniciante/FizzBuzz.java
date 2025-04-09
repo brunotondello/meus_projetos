@@ -1,4 +1,4 @@
-package projetos.meusprojetos.iniciantes;
+package projetos.meusprojetos.iniciante;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +12,7 @@ public class FizzBuzz extends JFrame {
     private Thread thread; // <<< SEGURA A THREAD PRA PARAR DEPOIS
 
     public FizzBuzz() {
+
         setTitle("FizzBuzz em Java");
         setSize(400, 500);
         setLocationRelativeTo(null);

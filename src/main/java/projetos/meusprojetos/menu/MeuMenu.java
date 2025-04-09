@@ -1,15 +1,15 @@
 package projetos.meusprojetos.menu;
 
-import projetos.meusprojetos.iniciantes.FizzBuzz;
+import projetos.meusprojetos.iniciante.CalcularFatoriais;
+import projetos.meusprojetos.iniciante.FizzBuzz;
+import projetos.meusprojetos.iniciante.InversorDePalavras;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class MeuMenu {
+public class MeuMenu extends JMenuBar {
 
-    public JMenuBar criarMenu() {
-        // Criar a barra do menu
-        JMenuBar barraMenu = new JMenuBar(); //Criar a barra menu
+    public MeuMenu() {
 
         // Menu "Inicio"
         JMenu menuInicio = new JMenu("Inicio");// Criar o primeiro item da barra
@@ -21,11 +21,20 @@ public class MeuMenu {
         // Menu Iniciante
         JMenu menuIniciante = new JMenu("Iniciante");// Criar o primeiro item da barra
         JMenuItem itemFizzBuzz = new JMenuItem("FizzBuzz");
+        JMenuItem itemFatoriais = new JMenuItem("Calcular Fatoriais");
+        JMenuItem itemInvertePalavras = new JMenuItem("Inversor de palavras");
 
         // Adiciona itens no menu Iniciante
         itemFizzBuzz.addActionListener(e -> new FizzBuzz());
         menuIniciante.add(itemFizzBuzz);
 
+        itemFatoriais.addActionListener(e -> new CalcularFatoriais());
+        menuIniciante.add(itemFatoriais);
+
+        itemInvertePalavras.addActionListener(e -> new InversorDePalavras());
+        menuIniciante.add(itemInvertePalavras);
+
+        // ******************************
         // Menu "ajuda"
         JMenu menuAjuda = new JMenu("Ajuda");
         JMenuItem itemSobre = new JMenuItem("Sobre");
@@ -35,11 +44,10 @@ public class MeuMenu {
         menuAjuda.add(itemSobre);
 
         // Adiciona os menus na barra
-        barraMenu.add(menuInicio);
-        barraMenu.add(menuIniciante);
-        barraMenu.add(menuAjuda);
+        this.add(menuInicio);
+        this.add(menuIniciante);
+        this.add(menuAjuda);
 
-        return barraMenu;
     }
 
     private void mostrarSobre() {
