@@ -64,10 +64,10 @@ public class JogoDaVelha extends JFrame implements ActionListener {
         clicado.setEnabled(false);
 
         if (verificarVitoria()) {
-            status.setText("🎉 Jogador " + jogadorAtual + " venceu!");
+            status.setText("Jogador " + jogadorAtual + " venceu!");
             jogoAtivo = false;
         } else if (tabuleiroCheio()) {
-            status.setText("😬 Empate!");
+            status.setText("Empate!");
             jogoAtivo = false;
         } else {
             jogadorAtual = (jogadorAtual == 'X') ? 'O' : 'X';
