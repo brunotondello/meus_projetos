@@ -4,7 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Scanner;
+import java.util.*;
+import java.util.List;
 
 public class JogoDaVelha extends JFrame implements ActionListener {
 
@@ -13,18 +14,25 @@ public class JogoDaVelha extends JFrame implements ActionListener {
     private boolean jogoAtivo = true;
     private JLabel status;
     private JButton botaoReiniciar;
+    private JLabel placar;
+    private JComboBox<String> seletorDificuldade;
+    private JComboBox<String> seletorModo;
+    private int vitoriasX = 0;
+    private int vitoriasO = 0;
+
+    private static final int[][] COMBINACOES_VITORIA = {
+            {0, 1, 2}, {3, 4, 5}, {6, 7, 8},
+            {0, 3, 6}, {1, 4, 7}, {2, 5, 8},
+            {0, 4, 8}, {2, 4, 6}
+    };
 
     public JogoDaVelha() {
-        setTitle("Jogo da Velha - Java");
-        setSize(400, 450);
-        setResizable(false); // Impede redimensionamento da janela
-        setLocationRelativeTo(null); // Centraliza a janela na tela
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setTitle("Jogo da Velha - Java Swing");
+        setSize(400, 500);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // Painel dos botões (tabuleiro)
-        JPanel painelJogo = new JPanel();
-        painelJogo.setLayout(new GridLayout(3, 3));
+        JPanel painelJogo = new JPanel(new GridLayout(3, 3));
 
         for (int i = 0; i < 9; i++) {
             botoes[i] = new JButton("");
@@ -33,66 +41,204 @@ public class JogoDaVelha extends JFrame implements ActionListener {
             painelJogo.add(botoes[i]);
         }
 
-        // Status do jogo
         status = new JLabel("Vez do jogador: X", SwingConstants.CENTER);
         status.setFont(new Font("Arial", Font.PLAIN, 20));
         add(status, BorderLayout.NORTH);
-        add(painelJogo, BorderLayout.CENTER);
 
-        // Botão de Reiniciar
-        botaoReiniciar = new JButton("Reiniciar");
+        // Botões
+        botaoReiniciar = new JButton("Reiniciar Jogo");
         botaoReiniciar.setFont(new Font("Arial", Font.PLAIN, 18));
         botaoReiniciar.addActionListener(e -> reiniciarJogo());
 
-        JPanel painelInferior = new JPanel();
-        painelInferior.setLayout(new BorderLayout());
-        painelInferior.add(botaoReiniciar, BorderLayout.CENTER);
+        JButton botaoZerar = new JButton("Zerar Placar");
+        botaoZerar.setFont(new Font("Arial", Font.PLAIN, 18));
+        botaoZerar.addActionListener(e -> {
+            vitoriasX = 0;
+            vitoriasO = 0;
+            atualizarPlacar();
+        });
 
+        placar = new JLabel("Vitórias - X: 0 | O: 0", SwingConstants.CENTER);
+        placar.setFont(new Font("Arial", Font.PLAIN, 18));
+
+        seletorDificuldade = new JComboBox<>(new String[]{"Fácil", "Médio", "Difícil"});
+        seletorDificuldade.setFont(new Font("Arial", Font.PLAIN, 16));
+
+        seletorModo = new JComboBox<>(new String[]{"1 Jogador", "2 Jogadores"});
+        seletorModo.setFont(new Font("Arial", Font.PLAIN, 16));
+
+        JPanel botoesControle = new JPanel(new GridLayout(1, 2));
+        botoesControle.add(botaoReiniciar);
+        botoesControle.add(botaoZerar);
+
+        JPanel painelInferior = new JPanel(new BorderLayout());
+        painelInferior.add(seletorDificuldade, BorderLayout.NORTH);
+        painelInferior.add(botoesControle, BorderLayout.CENTER);
+        painelInferior.add(placar, BorderLayout.SOUTH);
+        painelInferior.add(seletorModo, BorderLayout.WEST);
+
+        add(painelJogo, BorderLayout.CENTER);
         add(painelInferior, BorderLayout.SOUTH);
-
-        setVisible(true);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!jogoAtivo) return;
 
         JButton clicado = (JButton) e.getSource();
 
-        if (!clicado.getText().equals("")) return; // já clicado
+        if (!clicado.getText().equals("")) return;
 
         clicado.setText(String.valueOf(jogadorAtual));
         clicado.setEnabled(false);
 
         if (verificarVitoria()) {
-            status.setText("Jogador " + jogadorAtual + " venceu!");
+            status.setText("🎉 Jogador " + jogadorAtual + " venceu!");
+            if (jogadorAtual == 'X') vitoriasX++;
+            else vitoriasO++;
+            atualizarPlacar();
             jogoAtivo = false;
         } else if (tabuleiroCheio()) {
-            status.setText("Empate!");
+            status.setText("😬 Empate!");
             jogoAtivo = false;
         } else {
             jogadorAtual = (jogadorAtual == 'X') ? 'O' : 'X';
             status.setText("Vez do jogador: " + jogadorAtual);
+            if (jogadorAtual == 'O' && seletorModo.getSelectedItem().equals("1 Jogador")) {
+                jogarIA();
+            }
         }
     }
 
-    private boolean verificarVitoria() {
-        int[][] vitorias = {
-                {0,1,2}, {3,4,5}, {6,7,8}, // linhas
-                {0,3,6}, {1,4,7}, {2,5,8}, // colunas
-                {0,4,8}, {2,4,6}           // diagonais
-        };
+    private void jogarIA() {
+        String dificuldade = (String) seletorDificuldade.getSelectedItem();
+        switch (dificuldade) {
+            case "Fácil": jogadaAleatoria(); break;
+            case "Médio": jogadaMedia(); break;
+            case "Difícil": jogadaMinimax(); break;
+        }
 
-        for (int[] comb : vitorias) {
-            String b1 = botoes[comb[0]].getText();
-            String b2 = botoes[comb[1]].getText();
-            String b3 = botoes[comb[2]].getText();
+        if (verificarVitoria()) {
+            status.setText("🎉 Jogador O venceu!");
+            vitoriasO++;
+            atualizarPlacar();
+            jogoAtivo = false;
+        } else if (tabuleiroCheio()) {
+            status.setText("😬 Empate!");
+            jogoAtivo = false;
+        } else {
+            jogadorAtual = 'X';
+            status.setText("Vez do jogador: X");
+        }
+    }
 
-            if (!b1.equals("") && b1.equals(b2) && b2.equals(b3)) {
-                botoes[comb[0]].setBackground(Color.GREEN);
-                botoes[comb[1]].setBackground(Color.GREEN);
-                botoes[comb[2]].setBackground(Color.GREEN);
+    private void jogadaAleatoria() {
+        List<Integer> livres = new ArrayList<>();
+        for (int i = 0; i < botoes.length; i++) {
+            if (botoes[i].getText().equals("")) livres.add(i);
+        }
+        if (!livres.isEmpty()) {
+            int escolha = livres.get(new Random().nextInt(livres.size()));
+            botoes[escolha].setText("O");
+            botoes[escolha].setEnabled(false);
+        }
+    }
+
+    private void jogadaMedia() {
+        if (!tentarJogada("O")) {
+            if (!tentarJogada("X")) {
+                jogadaAleatoria();
+            }
+        }
+    }
+
+    private boolean tentarJogada(String jogador) {
+        for (int i = 0; i < botoes.length; i++) {
+            if (botoes[i].getText().equals("")) {
+                botoes[i].setText(jogador);
+                boolean venceu = verificarVitoria();
+                botoes[i].setText("");
+                if (venceu) {
+                    botoes[i].setText("O");
+                    botoes[i].setEnabled(false);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void jogadaMinimax() {
+        int melhorValor = Integer.MIN_VALUE;
+        int melhorJogada = -1;
+
+        for (int i = 0; i < botoes.length; i++) {
+            if (botoes[i].getText().equals("")) {
+                botoes[i].setText("O");
+                int valor = minimax(false);
+                botoes[i].setText("");
+                if (valor > melhorValor) {
+                    melhorValor = valor;
+                    melhorJogada = i;
+                }
+            }
+        }
+
+        if (melhorJogada != -1) {
+            botoes[melhorJogada].setText("O");
+            botoes[melhorJogada].setEnabled(false);
+        }
+    }
+
+    private int minimax(boolean isMax) {
+        if (verificarVitoriaSimulado("O")) return 1;
+        if (verificarVitoriaSimulado("X")) return -1;
+        if (tabuleiroCheio()) return 0;
+
+        int melhorValor = isMax ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+
+        for (int i = 0; i < botoes.length; i++) {
+            if (botoes[i].getText().equals("")) {
+                botoes[i].setText(isMax ? "O" : "X");
+                int valor = minimax(!isMax);
+                botoes[i].setText("");
+                melhorValor = isMax ? Math.max(valor, melhorValor) : Math.min(valor, melhorValor);
+            }
+        }
+        return melhorValor;
+    }
+
+    private boolean verificarVitoriaSimulado(String jogador) {
+        for (int[] c : COMBINACOES_VITORIA) {
+            String b1 = botoes[c[0]].getText();
+            String b2 = botoes[c[1]].getText();
+            String b3 = botoes[c[2]].getText();
+            if (b1.equals(jogador) && b2.equals(jogador) && b3.equals(jogador)) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    private int[] getCombinacaoVencedora() {
+        for (int[] c : COMBINACOES_VITORIA) {
+            String b1 = botoes[c[0]].getText();
+            String b2 = botoes[c[1]].getText();
+            String b3 = botoes[c[2]].getText();
+            if (!b1.equals("") && b1.equals(b2) && b2.equals(b3)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    private boolean verificarVitoria() {
+        int[] combinacao = getCombinacaoVencedora();
+        if (combinacao != null) {
+            for (int i : combinacao) {
+                botoes[i].setBackground(Color.GREEN);
+            }
+            return true;
         }
         return false;
     }
@@ -104,94 +250,25 @@ public class JogoDaVelha extends JFrame implements ActionListener {
         return true;
     }
 
+    private void atualizarPlacar() {
+        placar.setText("Vitórias - X: " + vitoriasX + " | O: " + vitoriasO);
+    }
+
     private void reiniciarJogo() {
         for (int i = 0; i < botoes.length; i++) {
             botoes[i].setText("");
             botoes[i].setEnabled(true);
-            botoes[i].setBackground(null); // remove cor de vitória
+            botoes[i].setBackground(UIManager.getColor("Button.background"));
         }
         jogadorAtual = 'X';
         jogoAtivo = true;
-        status.setText("Vez do jogador: " + jogadorAtual);
+        status.setText("Vez do jogador: X");
     }
 
-
- /*   public static void main(String[] args) {
+    public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JogoDaVelha jogo = new JogoDaVelha();
             jogo.setVisible(true);
         });
     }
-
-    char[] tabuleiro = {'1','2','3','4','5','6','7','8','9'};
-
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        char[] tabuleiro = {'1','2','3','4','5','6','7','8','9'};
-        char jogadorAtual = 'X';
-        int jogadas = 0;
-
-        while (true) {
-            mostrarTabuleiro(tabuleiro);
-            System.out.print("Jogador " + jogadorAtual + ", escolha uma posição (1-9): ");
-            int pos;
-
-            try {
-                pos = scanner.nextInt() - 1;
-                if (pos < 0 || pos > 8 || tabuleiro[pos] == 'X' || tabuleiro[pos] == 'O') {
-                    System.out.println("Posição inválida ou já ocupada. Tente novamente.");
-                    continue;
-                }
-            } catch (Exception e) {
-                System.out.println("Entrada inválida.");
-                scanner.next(); // limpar scanner
-                continue;
-            }
-
-            tabuleiro[pos] = jogadorAtual;
-            jogadas++;
-
-            if (verificarVitoria(tabuleiro, jogadorAtual)) {
-                mostrarTabuleiro(tabuleiro);
-                System.out.println("🎉 Jogador " + jogadorAtual + " venceu!");
-                break;
-            }
-
-            if (jogadas == 9) {
-                mostrarTabuleiro(tabuleiro);
-                System.out.println("😬 Empate!");
-                break;
-            }
-
-            jogadorAtual = (jogadorAtual == 'X') ? 'O' : 'X';
-        }
-
-        scanner.close();
-    }
-
-
-    public static void mostrarTabuleiro(char[] tabuleiro) {
-        System.out.println();
-        System.out.println(" " + tabuleiro[0] + " | " + tabuleiro[1] + " | " + tabuleiro[2]);
-        System.out.println("---+---+---");
-        System.out.println(" " + tabuleiro[3] + " | " + tabuleiro[4] + " | " + tabuleiro[5]);
-        System.out.println("---+---+---");
-        System.out.println(" " + tabuleiro[6] + " | " + tabuleiro[7] + " | " + tabuleiro[8]);
-        System.out.println();
-    }
-
-    public static boolean verificarVitoria(char[] tabuleiro, char jogador) {
-        int[][] combinacoes = {
-                {0,1,2},{3,4,5},{6,7,8}, // linhas
-                {0,3,6},{1,4,7},{2,5,8}, // colunas
-                {0,4,8},{2,4,6}          // diagonais
-        };
-
-        for (int[] c : combinacoes) {
-            if (tabuleiro[c[0]] == jogador && tabuleiro[c[1]] == jogador && tabuleiro[c[2]] == jogador) {
-                return true;
-            }
-        }
-        return false;
-    }*/
 }
