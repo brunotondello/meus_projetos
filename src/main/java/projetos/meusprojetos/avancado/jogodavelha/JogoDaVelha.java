@@ -1,6 +1,4 @@
-package projetos.meusprojetos.avancado;
-
-import projetos.meusprojetos.avancado.jogodavelha.JanelaJogo;
+package projetos.meusprojetos.avancado.jogodavelha;
 
 import javax.swing.*;
 

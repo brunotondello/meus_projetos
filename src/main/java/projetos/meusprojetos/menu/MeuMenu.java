@@ -1,6 +1,9 @@
 package projetos.meusprojetos.menu;
 
-import projetos.meusprojetos.avancado.JogoDaVelha;
+import projetos.meusprojetos.avancado.EncurtadorDeURL;
+import projetos.meusprojetos.avancado.interpretadordeexpressoes.InterpretadorExpressao;
+import projetos.meusprojetos.avancado.jogodavelha.JogoDaVelha;
+import projetos.meusprojetos.avancado.crud.CadastroUsuarios;
 import projetos.meusprojetos.iniciante.*;
 import projetos.meusprojetos.intermediario.*;
 
@@ -31,9 +34,9 @@ public class MeuMenu extends JMenuBar {
         }));
 
         add(criarMenu("Avançado", new String[]{
-                "Jogo da Velha"
+                "Jogo da Velha", "Cadastro de Usuários", "Interpretador de Expressão", "Encurtador de URL"
         }, new Runnable[]{
-                JogoDaVelha::new
+                JogoDaVelha::new, CadastroUsuarios::new, InterpretadorExpressao::new, EncurtadorDeURL::new
         }));
 
         add(criarMenu("Ajuda", new String[]{"Sobre"}, new Runnable[]{
